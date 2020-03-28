@@ -2,12 +2,12 @@
 
 const mongoose = require("mongoose"),
     Schema = mongoose.Schema;
+const Task = require('./tasks');
 
 // create a schema for Dish
 let postSchema = new Schema({
-    _id: Schema.Types.ObjectId,
     postName  : String,
-    task   : { type: Schema.Types.ObjectId, ref: 'Task' },
+    task   : { type: Schema.Types.ObjectId, ref: 'tasks' },
     createdAt : Date,
     timeSpent: Number,
     details: String,
