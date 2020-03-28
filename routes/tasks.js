@@ -1,23 +1,22 @@
 var express = require('express');
 var router = express.Router();
+var taskController = require('../controllers/taskController');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.json('All tasks');
+    taskController.getTasks(req, res);
 });
 
-router.get('/:id', function(req, res, next) {
-    let id = req.params.id;
-    res.json(id);
+router.get('/:_id', function(req, res, next) {
+    taskController.getTask(req, res);
 });
 
-router.put('/:id', function(req, res, next) {
-    let id = req.params.id;
-    res.json(id);
+router.put('/:_id', function(req, res, next) {
+    taskController.editTask(req, res);
 });
 
 router.post('/', function(req, res, next) {
-    res.json("the add time for task");
+    taskController.addTask(req, res);
 });
 
 module.exports = router;
