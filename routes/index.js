@@ -11,10 +11,29 @@ const swaggerOptions = {
     definition: {
         openapi: '3.0.0', // Specification (optional, defaults to swagger: '2.0')
         info: {
-            title: 'Hello World', // Title (required)
+            title: 'Logger apis', // Title (required)
             version: '1.0.0', // Version (required)
         },
-        host: "http://localhost:3000"
+        host: "http://localhost:3000",
+        schemes: [ "http" ],
+        tags: [
+            {
+                name: "posts",
+                description: "Posts related apis"
+            },
+            {
+                name: "tasks",
+                description: "Tasks related apis"
+            },
+            {
+                name: "timeTable",
+                description: "Time table related apis"
+            },
+            {
+                name: "users",
+                description: "User related apis"
+            }
+        ]
     },
     // Path to the API docs
     apis: ['./routes/*.js']

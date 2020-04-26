@@ -103,7 +103,7 @@ const editPost = async (req, res) => {
         }
 
         let updateObject = {};
-
+console.log(req.body);
         if (req.body.hasOwnProperty('postName')) {
             updateObject.postName = req.body.postName;
         }
