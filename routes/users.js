@@ -17,7 +17,7 @@ const UserController = require('../controllers/userController');
  *      - "users"
  */
 router.get('/users', function(req, res, next) {
-    res.send({message: "there is no content"});
+    UserController.getUsers(req, res);
 });
 
 /**
@@ -40,7 +40,7 @@ router.get('/users', function(req, res, next) {
  *      - "users"
  */
 router.get('/user/:_id', function(req, res, next) {
-    res.send({message: "there is no content"});
+    UserController.getUser(req, res);
 });
 
 /**
@@ -67,7 +67,7 @@ router.get('/user/:_id', function(req, res, next) {
  *      - "users"
  */
 router.post('/login', function(req, res, next) {
-    UserController.login(req, res);
+    UserController.login(req, res, next);
 });
 
 /**
@@ -95,9 +95,11 @@ router.post('/login', function(req, res, next) {
  *                          type: string
  *                      address:
  *                          type: array
+ *                          items:
+ *                              type: object
  *     responses:
  *       200:
- *         description: task
+ *         description: user as a result
  *     tags:
  *      - "users"
  */

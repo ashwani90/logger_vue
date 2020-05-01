@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const utils = require('../utils/utils');
+
 const passport = require('passport');
+const config = require('../config/passport');
 
 const signUp = async (req, res) => {
     try {
@@ -12,7 +14,7 @@ const signUp = async (req, res) => {
 
         if (!user) {
             let user = new User();
-            user.setPassword(req.body.password);
+            await user.setPassword(req.body.password);
             user.username = req.body.username;
             user.email = req.body.email;
             user.firstName = req.body.firstName;
@@ -37,39 +39,58 @@ const signUp = async (req, res) => {
 
     };
 
-// const login = async (req, res) => {
-//     let user = {
-//         email: req.body.email,
-//         password: req.body.password
-//     };
-//
-//     passport.authenticate('local', { session: false }, (err, passportUser, info) => {
-//         if(err) {
-//             return next(err);
-//         }
-//
-//         if(passportUser) {
-//             const user = passportUser;
-//
-//             return res.status(200).json({
-//                 success: true,
-//                 data: user
-//             });
-//         }
-//
-//         return status(400).info;
-//     })(req, res, next);
-// };
-//
-// const editProfile = async (req, res) => {
-//
-// };
-//
-// const getUsers = async (req, res) => {
-//
-// };
+const login = async (req, res, next) => {
+    passport.authenticate('local', function(err, user, info) {
+        if (err) { return res.send({success: false}); }
+        if (!user) { return res.send({success: false, message: "User was not found"}); }
+        res.send({
+            success: true,
+            data: user
+        });
+    })(req, res, next);
+};
+
+const editProfile = async (req, res) => {
+
+};
+
+const getUsers = async (req, res) => {
+    try {
+        utils.log("[getUsers] Request received to get all the users");
+        const users = await User.find({});
+        return res.status(200).json({
+            success: true,
+            data: users
+        });
+    } catch (err) {
+        utils.log("[getUsers] Error occurred in the api " + err);
+        res.status(500).json({error: 'Something went wrong'});
+    }
+};
+
+const getUser = async (req, res) => {
+    try {
+        utils.log("[getUser] Request received to get a user");
+        const objectId = req.params._id;
+        if (!objectId) {
+            return res.status(400).json({msg: "Missing required parameter", status: "BAD_REQUEST"});
+        }
+
+        const user = await User.find({'_id' : objectId});
+
+        return res.status(200).json({
+            success: true,
+            data: user
+        });
+    } catch (err) {
+        utils.log("[getUser] Error occurred in the api " + err);
+        res.status(500).json({error: 'Something went wrong'});
+    }
+};
 
 module.exports = {
     signUp: signUp,
-    // login: login
+    login: login,
+    getUsers: getUsers,
+    getUser: getUser
 };

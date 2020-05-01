@@ -2,8 +2,8 @@
 
 const mongoose = require("mongoose"),
     Schema = mongoose.Schema;
+const bcrypt = require('bcryptjs');
 
-const crypto = require('crypto');
 
 const addressSchema = new Schema({ address1: String, city: String, state: String, country: String });
 
@@ -24,9 +24,12 @@ let userSchema = new Schema({
 }, {timestamps: true});
 
 
-userSchema.methods.setPassword = function(password) {
-    this.salt = crypto.randomBytes(16).toString('hex');
-    this.password = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
+userSchema.methods.setPassword = async function(password) {
+
+    let salt = await bcrypt.genSalt(10);
+    let newPassword = await bcrypt.hash(password, salt);
+    this.salt = salt;
+    this.password = newPassword;
 };
 
 userSchema.methods.validatePassword = function(password) {
