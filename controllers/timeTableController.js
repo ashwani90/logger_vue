@@ -112,7 +112,7 @@ const getTimeTables = async (req, res) => {
 };
 
 /**
- * 
+ *
  * @param req
  * @param res
  * @returns {Promise<*>}
