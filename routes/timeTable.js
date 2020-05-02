@@ -7,6 +7,11 @@ var timeTableController = require('../controllers/timeTableController');
  *
  * /time-table:
  *   get:
+ *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *     description: Returns time tables
  *     produces:
  *      - application/json
@@ -24,15 +29,19 @@ router.get('/', function(req, res, next) {
  * @swagger
  * /time-table/{_id}:
  *   get:
- *     description: Returns time table with time table id
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: Time table id you want to get
  *        in: path
  *        required: true
  *        type: string
+ *     description: Returns time table with time table id
+ *     produces:
+ *      - application/json
  *     responses:
  *       200:
  *         description: task
@@ -47,15 +56,19 @@ router.get('/:_id', function(req, res, next) {
  * @swagger
  * /time-table/{_id}:
  *   put:
- *     description: Edit a single time table with given id
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: Time table id of the time table
  *        in: path
  *        required: true
  *        type: string
+ *     description: Edit a single time table with given id
+ *     produces:
+ *      - application/json
  *     requestBody:
  *      description: Request body for the time table
  *      required: true
@@ -80,6 +93,11 @@ router.put('/:_id', function(req, res, next) {
  * @swagger
  * /time-table:
  *   post:
+ *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *     description: Create a time table
  *     produces:
  *      - application/json

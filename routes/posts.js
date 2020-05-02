@@ -7,6 +7,11 @@ const PostController = require('../controllers/postController');
  * @swagger
  * /posts:
  *   get:
+ *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *     description: Returns posts
  *     produces:
  *      - application/json
@@ -24,15 +29,19 @@ router.get('/', function(req, res, next) {
  * @swagger
  * /posts/{_id}:
  *   get:
- *     description: Returns post with post id
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: Post id of the post
  *        in: path
  *        required: true
  *        type: string
+ *     description: Returns post with post id
+ *     produces:
+ *      - application/json
  *     responses:
  *       200:
  *         description: posts
@@ -47,15 +56,19 @@ router.get('/:_id', function(req, res, next) {
  * @swagger
  * /posts/{_id}:
  *   put:
- *     description: Edit a single post with given id
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: Post id of the post
  *        in: path
  *        required: true
  *        type: string
+ *     description: Edit a single post with given id
+ *     produces:
+ *      - application/json
  *     requestBody:
  *      required: true
  *      content:
@@ -85,6 +98,11 @@ router.put('/:_id', function(req, res, next) {
  * @swagger
  * /posts:
  *   post:
+ *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *     description: Create post
  *     produces:
  *      - application/json

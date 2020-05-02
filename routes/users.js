@@ -7,6 +7,11 @@ const UserController = require('../controllers/userController');
  *
  * /users:
  *   get:
+ *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *     description: Returns users
  *     produces:
  *      - application/json
@@ -24,15 +29,19 @@ router.get('/users', function(req, res, next) {
  * @swagger
  * /user/{_id}:
  *   get:
- *     description: Returns a user
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: User id
  *        in: path
  *        required: true
  *        type: string
+ *     description: Returns a user
+ *     produces:
+ *      - application/json
  *     responses:
  *       200:
  *         description: task
@@ -111,15 +120,19 @@ router.post('/register', function(req, res, next) {
  * @swagger
  * /user/{_id}:
  *   put:
- *     description: Edit profile of a user
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: User id
  *        in: path
  *        required: true
  *        type: string
+ *     description: Edit profile of a user
+ *     produces:
+ *      - application/json
  *     requestBody:
  *      description: Request body for the user edit
  *      required: true

@@ -3,9 +3,11 @@
 const mongoose = require("mongoose"),
     Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
+const generalHelper = require('../helpers/generalHelper');
 
 
 const addressSchema = new Schema({ address1: String, city: String, state: String, country: String });
+const sessionSchema = new Schema({ sid: String, enabled: Boolean });
 
 // create a schema for Dish
 let userSchema = new Schema({
@@ -20,9 +22,26 @@ let userSchema = new Schema({
         type: String,
         enum : ['active','inactive'],
         default: 'user'
-    }
+    },
+    session: [ sessionSchema ]
 }, {timestamps: true});
 
+userSchema.methods.createSession = async function() {
+    let salt = await bcrypt.genSalt(10);
+    let newSid = await bcrypt.hash(generalHelper.generateRandomString(8), salt);
+    this.session = [
+        {
+            sid: newSid,
+            enabled: true
+        }
+    ];
+    // console.log('this is coming hre');
+    // console.log(newSid);
+    // await this.session.push({
+    //     sid: newSid,
+    //     enabled: true
+    // });
+};
 
 userSchema.methods.setPassword = async function(password) {
 
@@ -32,9 +51,8 @@ userSchema.methods.setPassword = async function(password) {
     this.password = newPassword;
 };
 
-userSchema.methods.validatePassword = function(password) {
-    const hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
-    return this.hash === hash;
+userSchema.methods.getUserFromSid = async function(sid) {
+    return await User.findOne({'session.sid': sid, enabled: true});
 };
 
 // Create a model using schema

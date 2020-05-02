@@ -21,6 +21,7 @@ const signUp = async (req, res) => {
             user.lastName = req.body.lastName;
             user.address = req.body.address;
             user.status = 'active';
+            await user.createSession();
             let userData = await user.save();
 
             return res.status(200).json({
@@ -40,11 +41,17 @@ const signUp = async (req, res) => {
     };
 
 const login = async (req, res, next) => {
-    passport.authenticate('local', function(err, user, info) {
+    passport.authenticate('local', async function(err, user, info) {
         if (err) { return res.send({success: false}); }
         if (!user) { return res.send({success: false, message: "User was not found"}); }
+
+        let sid = await user.createSession();
+
+        await user.save();
+
         res.send({
             success: true,
+            sid: sid,
             data: user
         });
     })(req, res, next);
@@ -55,7 +62,7 @@ const editProfile = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-    try {
+    try {console.log(req.user);
         utils.log("[getUsers] Request received to get all the users");
         const users = await User.find({});
         return res.status(200).json({

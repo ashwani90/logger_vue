@@ -1,3 +1,4 @@
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -5,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const passport = require('passport');
 const connectDB = require('./config/db');
+const validateSession = require("./middlewares/validSession");
+
 
 var usersRouter = require('./routes/users');
 var postsRouter = require('./routes/posts');
@@ -30,6 +33,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 require('./config/passport');
+app.use(validateSession);
 
 // Mapped to all routers
 app.use('/', usersRouter);

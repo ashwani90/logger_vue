@@ -7,6 +7,11 @@ var taskController = require('../controllers/taskController');
  *
  * /tasks:
  *   get:
+ *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *     description: Returns tasks
  *     produces:
  *      - application/json
@@ -24,15 +29,19 @@ router.get('/', function(req, res, next) {
  * @swagger
  * /tasks/{_id}:
  *   get:
- *     description: Returns task with task id
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: Task id of the task
  *        in: path
  *        required: true
  *        type: string
+ *     description: Returns task with task id
+ *     produces:
+ *      - application/json
  *     responses:
  *       200:
  *         description: task
@@ -47,15 +56,19 @@ router.get('/:_id', function(req, res, next) {
  * @swagger
  * /tasks/{_id}:
  *   put:
- *     description: Edit a single task with given id
- *     produces:
- *      - application/json
  *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *      - name: _id
  *        description: Task id of the task
  *        in: path
  *        required: true
  *        type: string
+ *     description: Edit a single task with given id
+ *     produces:
+ *      - application/json
  *     requestBody:
  *      description: Request body for the task
  *      required: true
@@ -88,6 +101,11 @@ router.put('/:_id', function(req, res, next) {
  * @swagger
  * /tasks:
  *   post:
+ *     parameters:
+ *      - name: sid
+ *        type: string
+ *        in: header
+ *        description: Session id in header
  *     description: Create a task
  *     produces:
  *      - application/json
