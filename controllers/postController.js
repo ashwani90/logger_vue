@@ -18,11 +18,20 @@ const addPost = async (req, res) => {
 
         utils.log("[addPost] Request received to add the information of a post " + req.body);
 
+        // All these kind of things I will move to the validations
+        let taskThere = await Task.findOne({taskId: taskId, user: req.user._id});
+
+        if (taskThere.user !== req.user._id) {
+            return res.status(409).send({success: false, message: "You are not allowed here"});
+        }
+
         const post = await Post.create({
             postName: postName,
             timeSpent: timeSpent,
             details: details,
             task: taskId,
+            status: 'active',
+            user: req.user._id
         });
 
         const taskExisting = await Task.findOne({'_id' : taskId});
@@ -55,7 +64,7 @@ const addPost = async (req, res) => {
 const getPosts = async (req, res) => {
     try {
         utils.log("[getPosts] Request received to get all the posts");
-        const posts = await Post.find({}).populate('task', 'taskName');
+        const posts = await Post.find({user: req.user._id}).populate('task', 'taskName');
         return res.status(200).json({
             success: true,
             data: posts
@@ -81,7 +90,7 @@ const getPost = async (req, res) => {
             return res.status(400).json({msg: "Missing required parameter", status: "BAD_REQUEST"});
         }
 
-        const post = await Post.find({'_id' : objectId}).populate('task', 'taskName');
+        const post = await Post.find({'_id' : objectId, user: req.user._id}).populate('task', 'taskName');
 
         return res.status(200).json({
             success: true,
@@ -102,19 +111,15 @@ const editPost = async (req, res) => {
             return res.status(400).json({msg: "Missing required parameter", status: "BAD_REQUEST"});
         }
 
+        let existingPost = Post.findOne({user: req.user._id, _id: objectId});
+        if (!existingPost) {
+            return res.status(400).json({msg: "You can not access this post", status: "BAD_REQUEST"});
+        }
+
         let updateObject = {};
 
-        if (req.body.hasOwnProperty('postName')) {
-            updateObject.postName = req.body.postName;
-        }
-        if (req.body.hasOwnProperty('taskId')) {
-            updateObject.taskId = req.body.taskId;
-        }
-        if (req.body.hasOwnProperty('timeSpent')) {
-            updateObject.timeSpent = req.body.timeSpent;
-        }
-        if (req.body.hasOwnProperty('details')) {
-            updateObject.details = req.body.details;
+        if (req.body.hasOwnProperty('isEnabled')) {
+            updateObject.status = req.body.isEnabled ? 'active' : 'inactive';
         }
 
         if (updateObject == {}) {

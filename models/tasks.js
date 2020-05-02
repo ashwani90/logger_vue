@@ -8,12 +8,17 @@ const Post = require('./posts');
 let taskSchema = new Schema({
     taskName  : String,
     posts   : [{ type: Schema.Types.ObjectId, ref: 'posts' }],
+    user: { type: Schema.Types.ObjectId, ref: 'users' },
     createdAt : Date,
     expectedFinishDate: Date,
     startDate: Date,
     endDate: Date,
     totalTimeSpent: Date,
-    status: {type: Schema.Types.ObjectId, ref: 'Status'},
+    status:  {
+        type: String,
+        enum : ['active','inactive', 'completed', 'abandoned'],
+        default: 'active'
+    },
     details: String,
     description: String,
     updatedAt: Date

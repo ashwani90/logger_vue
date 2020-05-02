@@ -1,5 +1,6 @@
 const Task = require('../models/tasks');
 const utils = require('../utils/utils');
+const PostQueries = require('../models/Queries/post');
 
 /**
  * Function to add a task
@@ -23,7 +24,8 @@ const addTask = async (req, res) => {
             expectedFinishDate: expectedFinishDate,
             startDate: startDate,
             description: description,
-            details: details
+            details: details,
+            user: req.user._id
         });
 
         return res.status(200).json({
@@ -37,7 +39,7 @@ const addTask = async (req, res) => {
             return res.status(400).json({error: 'This task already exists'});
         }
 
-        res.status(500).json({error: 'Something went wrong'});
+        return res.status(500).json({error: 'Something went wrong'});
     }
 };
 
@@ -51,14 +53,14 @@ const addTask = async (req, res) => {
 const getTasks = async (req, res) => {
     try {
         utils.log("[getTasks] Request received to get all the tasks");
-        const tasks = await Task.find({});
+        const tasks = await Task.find({user: req.user._id});
         return res.status(200).json({
             success: true,
             data: tasks
         });
     } catch (err) {
         utils.log("[getTasks] Error occurred in the api " + err);
-        res.status(500).json({error: 'Something went wrong'});
+        return res.status(500).json({error: 'Something went wrong'});
     }
 };
 
@@ -77,7 +79,7 @@ const getTask = async (req, res) => {
             return res.status(400).json({msg: "Missing required parameter", status: "BAD_REQUEST"});
         }
 
-        const task = await Task.find({'_id' : objectId});
+        const task = await Task.find({'_id' : objectId, user: req.user._id});
 
         return res.status(200).json({
             success: true,
@@ -85,7 +87,7 @@ const getTask = async (req, res) => {
         });
     } catch (err) {
             utils.log("[getTask] Error occurred in the api " + err);
-        res.status(500).json({error: 'Something went wrong'});
+        return res.status(500).json({error: 'Something went wrong'});
     }
 };
 
@@ -96,6 +98,16 @@ const editTask = async (req, res) => {
         const objectId = req.params._id;
         if (!objectId) {
             return res.status(400).json({msg: "Missing required parameter", status: "BAD_REQUEST"});
+        }
+
+        let existingTask = await Task.findOne({_id: objectId});
+
+        if (existingTask.status === 'completed') {
+            return res.status(400).json({error: 'Task has already been marked as completed'});
+        }
+
+        if (existingTask.user !== req.user._id) {
+            return res.status(400).json({error: 'You can not be here'});
         }
 
         let updateObject = {};
@@ -114,6 +126,14 @@ const editTask = async (req, res) => {
         }
         if (req.body.hasOwnProperty('details')) {
             updateObject.details = req.body.details;
+        }
+        if (req.body.hasOwnProperty('status')) {
+
+             if (status === 'completed') {
+                 updateObject.endDate = new Date();
+                 updateObject.totalTimeSpent = await PostQueries.getTotalTimeSpent(objectId);
+             }
+            updateObject.status = req.body.status;
         }
 
         if (updateObject == {}) {

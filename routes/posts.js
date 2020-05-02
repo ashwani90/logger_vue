@@ -76,14 +76,8 @@ router.get('/:_id', function(req, res, next) {
  *              schema:
  *                  type: object
  *                  properties:
- *                      postName:
- *                          type: string
- *                      taskId:
- *                          type: string
- *                      details:
- *                          type: string
- *                      timeSpent:
- *                          type: string
+ *                      isEnabled:
+ *                          type: boolean
  *     responses:
  *       200:
  *         description: posts

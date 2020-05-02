@@ -11,6 +11,7 @@ const timeTableSchema = new Schema({
     // Later on I will add the user id here so as to specify who created this
     isActive: Boolean,
     description: String,
+    user: { type: Schema.Types.ObjectId, ref: 'users' },
 }, { timestamps: true });
 
 // Create a model using schema
