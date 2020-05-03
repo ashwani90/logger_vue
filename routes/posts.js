@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const PostController = require('../controllers/postController');
+// Cache management
+const cache = require('express-redis-cache')({
+    host: "localhost", port: 6379
+});
 
 
 /**
@@ -41,7 +45,9 @@ const PostController = require('../controllers/postController');
  *     tags:
  *      - "posts"
  */
+
 router.get('/', function(req, res, next) {
+    // , cache.route() just add this line onthe above function argument and it will work
     PostController.getPosts(req, res);
 });
 
@@ -69,6 +75,7 @@ router.get('/', function(req, res, next) {
  *      - "posts"
  */
 router.get('/:_id', function(req, res, next) {
+
     PostController.getPost(req, res);
 });
 

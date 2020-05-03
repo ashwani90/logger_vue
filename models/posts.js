@@ -16,10 +16,6 @@ let postSchema = new Schema({
     details: String,
 }, {timestamps: true});
 
-postSchema.pre('save', () => {
-
-});
-
 postSchema.methods.getPostsTime = async (taskId) => {
 
 };

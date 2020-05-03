@@ -2,6 +2,8 @@ const Post = require('../models/posts');
 const Task = require('../models/tasks');
 const utils = require('../utils/utils');
 const postQueries = require("../models/Queries/post");
+const contraints = require("../validations/constraints/constraints");
+const validate = require("validate.js");
 
 /**
  * Function to add a task
@@ -16,6 +18,10 @@ const addPost = async (req, res) => {
         let timeSpent = req.body.timeSpent;
         let taskId = req.body.taskId;
         let details = req.body.details;
+
+        if (validate({postName: postName, timeSpent: timeSpent, taskId: taskId, details: details}, contraints.postConstraints)) {
+            return res.status(409).send({success: false, message: "Field validation failed"});
+        }
 
         utils.log("[addPost] Request received to add the information of a post " + req.body);
 
@@ -35,13 +41,12 @@ const addPost = async (req, res) => {
             user: req.user._id
         });
 
-        const taskExisting = await Task.findOne({'_id' : taskId});
-        post.taskName = taskExisting.taskName;
-        post.taskIdentifier = taskExisting._id;
-        post.task = null;
-
         taskThere.totalTimeSpent = await postQueries.getTotalTimeSpent(taskId);
         taskThere.save();
+
+        post.taskName = taskThere.taskName;
+        post.taskIdentifier = taskThere._id;
+        post.task = null;
 
         return res.status(200).json({
             success: true,
