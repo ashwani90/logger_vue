@@ -52,7 +52,7 @@ userSchema.methods.setPassword = async function(password) {
 };
 
 userSchema.methods.getUserFromSid = async function(sid) {
-    return await User.findOne({'session.sid': sid, enabled: true});
+    return await User.findOne({'session.sid': sid, 'session.enabled': true});
 };
 
 // Create a model using schema

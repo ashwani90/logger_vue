@@ -1,6 +1,7 @@
 const Post = require('../models/posts');
 const Task = require('../models/tasks');
 const utils = require('../utils/utils');
+const postQueries = require("../models/Queries/post");
 
 /**
  * Function to add a task
@@ -19,9 +20,9 @@ const addPost = async (req, res) => {
         utils.log("[addPost] Request received to add the information of a post " + req.body);
 
         // All these kind of things I will move to the validations
-        let taskThere = await Task.findOne({taskId: taskId, user: req.user._id});
+        let taskThere = await Task.findOne({_id: taskId, user: req.user._id});
 
-        if (taskThere.user !== req.user._id) {
+        if (!taskThere.user.equals(req.user._id)) {
             return res.status(409).send({success: false, message: "You are not allowed here"});
         }
 
@@ -38,6 +39,9 @@ const addPost = async (req, res) => {
         post.taskName = taskExisting.taskName;
         post.taskIdentifier = taskExisting._id;
         post.task = null;
+
+        taskThere.totalTimeSpent = await postQueries.getTotalTimeSpent(taskId);
+        taskThere.save();
 
         return res.status(200).json({
             success: true,
@@ -64,7 +68,31 @@ const addPost = async (req, res) => {
 const getPosts = async (req, res) => {
     try {
         utils.log("[getPosts] Request received to get all the posts");
-        const posts = await Post.find({user: req.user._id}).populate('task', 'taskName');
+
+        // Query to get all the posts
+        let limit = Number(req.query.limit) ? Number(req.query.limit) : 20;
+        let pageNo = Number(req.query.pageNo) ? Number(req.query.pageNo) : 0;
+
+        let conditionObject = {user: req.user._id};
+        if (req.query.taskId) {
+            conditionObject.task._id = req.query.taskId;
+        }
+
+        if (req.query.fromDate && req.query.toDate) {
+            conditionObject.createdAt = {
+                $gte: Date.parse(req.query.fromDate),
+                $lt: Date.parse(req.query.toDate)
+            }
+        }
+
+        if (req.query.onlyActive) {
+            conditionObject.status = 'active';
+        }
+
+        const posts = await Post.find(conditionObject).populate('task', 'taskName')
+            .skip(limit*pageNo)
+            .limit(limit).sort( { createdAt: -1 } );
+
         return res.status(200).json({
             success: true,
             data: posts
@@ -127,6 +155,9 @@ const editPost = async (req, res) => {
         }
 
         await Post.findOneAndUpdate({'_id' : objectId}, updateObject);
+
+        let totalTimeSpent = await postQueries.getTotalTimeSpent(existingPost.task);
+        await Task.updateOne({ _id: existingPost.task }, { totalTimeSpent:  totalTimeSpent});
 
         return res.status(200).json({
             success: true,

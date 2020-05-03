@@ -12,6 +12,26 @@ var taskController = require('../controllers/taskController');
  *        type: string
  *        in: header
  *        description: Session id in header
+ *      - name: limit
+ *        type: integer
+ *        in: query
+ *        description: limit of records
+ *      - name: pageNo
+ *        type: integer
+ *        in: query
+ *        description: page no
+ *      - name: fromDate
+ *        type: string
+ *        in: query
+ *        description: from time for record filter
+ *      - name: toDate
+ *        type: string
+ *        in: query
+ *        description: to date for the record filter
+ *      - name: status
+ *        type: string
+ *        in: query
+ *        description: status of the records to be fetched
  *     description: Returns tasks
  *     produces:
  *      - application/json
@@ -86,6 +106,8 @@ router.get('/:_id', function(req, res, next) {
  *                      description:
  *                          type: string
  *                      details:
+ *                          type: string
+ *                      status:
  *                          type: string
  *     responses:
  *       200:

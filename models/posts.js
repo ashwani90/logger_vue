@@ -1,5 +1,3 @@
-/*globals require, module */
-
 const mongoose = require("mongoose"),
     Schema = mongoose.Schema;
 const Task = require('./tasks');
@@ -9,7 +7,6 @@ let postSchema = new Schema({
     postName  : String,
     task   : { type: Schema.Types.ObjectId, ref: 'tasks' },
     user: { type: Schema.Types.ObjectId, ref: 'users' },
-    createdAt : Date,
     timeSpent: Number,
     status: {
         type: String,
@@ -17,7 +14,10 @@ let postSchema = new Schema({
         default: 'user'
     },
     details: String,
-    updatedAt: Date
+}, {timestamps: true});
+
+postSchema.pre('save', () => {
+
 });
 
 postSchema.methods.getPostsTime = async (taskId) => {

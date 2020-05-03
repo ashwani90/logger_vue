@@ -14,8 +14,7 @@ module.exports = async function validateSession (req, res, next) {
         return res.send({success: false, error: 'Header missing from the request'});
     }
 
-    let user = new User();
-    await user.getUserFromSid(sid);
+    let user = await (new User()).getUserFromSid(sid);
 
     if (!user) {
         return res.send({success: false, error: 'User does not exist'});

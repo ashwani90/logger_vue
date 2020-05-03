@@ -12,6 +12,26 @@ const PostController = require('../controllers/postController');
  *        type: string
  *        in: header
  *        description: Session id in header
+ *      - name: limit
+ *        type: integer
+ *        in: query
+ *        description: limit of records needed
+ *      - name: pageNo
+ *        type: integer
+ *        in: query
+ *        description: page number related to limits
+ *      - name: fromDate
+ *        type: string
+ *        in: query
+ *        description: records lower limit of date
+ *      - name: toDate
+ *        type: string
+ *        in: query
+ *        description: records upper limit of date
+ *      - name: onlyActive
+ *        type: boolean
+ *        in: query
+ *        description: To return only active posts
  *     description: Returns posts
  *     produces:
  *      - application/json

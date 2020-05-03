@@ -53,7 +53,29 @@ const addTask = async (req, res) => {
 const getTasks = async (req, res) => {
     try {
         utils.log("[getTasks] Request received to get all the tasks");
-        const tasks = await Task.find({user: req.user._id});
+
+        // Query to get all the posts
+        let limit = Number(req.query.limit) ? Number(req.query.limit) : 20;
+        let pageNo = Number(req.query.pageNo) ? Number(req.query.pageNo) : 0;
+
+        let conditionObject = {user: req.user._id};
+
+
+        if (req.query.fromDate && req.query.toDate) {
+            conditionObject.createdAt = {
+                $gte: Date.parse(req.query.fromDate),
+                $lt: Date.parse(req.query.toDate)
+            }
+        }
+
+        if (req.query.status) {
+            conditionObject.status = req.query.status;
+        }
+
+        const tasks = await Task.find(conditionObject)
+            .skip(limit*pageNo)
+            .limit(limit).sort( { createdAt: -1 } );
+
         return res.status(200).json({
             success: true,
             data: tasks
@@ -106,7 +128,7 @@ const editTask = async (req, res) => {
             return res.status(400).json({error: 'Task has already been marked as completed'});
         }
 
-        if (existingTask.user !== req.user._id) {
+        if (!existingTask.user.equals(req.user._id)) {
             return res.status(400).json({error: 'You can not be here'});
         }
 
@@ -128,12 +150,12 @@ const editTask = async (req, res) => {
             updateObject.details = req.body.details;
         }
         if (req.body.hasOwnProperty('status')) {
-
+            let status = req.body.status;
              if (status === 'completed') {
                  updateObject.endDate = new Date();
                  updateObject.totalTimeSpent = await PostQueries.getTotalTimeSpent(objectId);
              }
-            updateObject.status = req.body.status;
+            updateObject.status = status;
         }
 
         if (updateObject == {}) {

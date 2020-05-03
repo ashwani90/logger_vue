@@ -12,8 +12,8 @@ const getTotalTimeSpent = async (taskId) => {
         }
     ]);
     return postTotal.total;
-}
+};
 
 module.exports = {
     getTotalTimeSpent: getTotalTimeSpent
-}
+};

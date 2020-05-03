@@ -9,7 +9,6 @@ let taskSchema = new Schema({
     taskName  : String,
     posts   : [{ type: Schema.Types.ObjectId, ref: 'posts' }],
     user: { type: Schema.Types.ObjectId, ref: 'users' },
-    createdAt : Date,
     expectedFinishDate: Date,
     startDate: Date,
     endDate: Date,
@@ -21,8 +20,7 @@ let taskSchema = new Schema({
     },
     details: String,
     description: String,
-    updatedAt: Date
-});
+}, {timestamps: true});
 
 // Create a model using schema
 let Task = mongoose.model("tasks", taskSchema);
